@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router";
-import { Home, Search, ShoppingBag, Heart, User } from "lucide-react";
+import { Home, Search, ShoppingBag, Heart, User, LogIn } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Badge } from "./ui/badge";
 
 export function BottomNav() {
-  const { cart } = useApp();
+  const { cart, user } = useApp();
   const location = useLocation();
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -13,7 +13,11 @@ export function BottomNav() {
     { icon: Search, label: "Search", path: "/products/all" },
     { icon: ShoppingBag, label: "Cart", path: "/cart", count: cartCount },
     { icon: Heart, label: "Orders", path: "/orders" },
-    { icon: User, label: "Profile", path: "/settings" },
+    { 
+      icon: user ? User : LogIn, 
+      label: user ? "Profile" : "Login", 
+      path: user ? "/settings" : "/login" 
+    },
   ];
 
   return (

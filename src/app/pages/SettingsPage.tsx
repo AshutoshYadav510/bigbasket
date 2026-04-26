@@ -1,4 +1,5 @@
-import { User, Bell, MapPin, CreditCard, HelpCircle, LogOut } from "lucide-react";
+import { User, Bell, MapPin, CreditCard, HelpCircle, LogOut, UserPlus } from "lucide-react";
+import { useNavigate } from "react-router";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -7,27 +8,55 @@ import { Label } from "../components/ui/label";
 import { Badge } from "../components/ui/badge";
 
 export function SettingsPage() {
-  const { seniorMode, toggleSeniorMode, darkMode, toggleDarkMode, language, toggleLanguage } = useApp();
+  const navigate = useNavigate();
+  const { user, logout, seniorMode, toggleSeniorMode, language, toggleLanguage } = useApp();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  if (!user) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <User className="h-24 w-24 mx-auto text-gray-300 dark:text-gray-600 mb-6" />
+        <h2 className={`${seniorMode ? 'text-4xl' : 'text-2xl'} font-bold text-gray-900 dark:text-white mb-4`}>
+          {language === "en" ? "Please login to view your profile" : "अपना प्रोफ़ाइल देखने के लिए कृपया लॉगिन करें"}
+        </h2>
+        <Button 
+          onClick={() => navigate("/login")} 
+          size={seniorMode ? "lg" : "default"}
+          className={`bg-green-600 hover:bg-green-700 text-white rounded-xl ${seniorMode ? 'text-2xl py-8 px-12' : 'py-6 px-8'}`}
+        >
+          <UserPlus className="mr-2 h-5 w-5" />
+          {language === "en" ? "Login / Sign Up" : "लॉगिन / साइन अप करें"}
+        </Button>
+      </div>
+    );
+  }
 
   const settingsSections = [
     {
       icon: User,
-      title: language === "en" ? "Profile" : "प्रोफ़ाइल",
+      title: language === "en" ? "Profile Details" : "प्रोफ़ाइल विवरण",
       items: [
-        { label: language === "en" ? "Name: Priya Sharma" : "नाम: प्रिया शर्मा" },
-        { label: language === "en" ? "Email: priya@example.com" : "ईमेल: priya@example.com" },
-        { label: language === "en" ? "Phone: +91 98765 43210" : "फोन: +91 98765 43210" },
+        { label: language === "en" ? `Name: ${user.name}` : `नाम: ${user.name}` },
+        { label: language === "en" ? `Email: ${user.email}` : `ईमेल: ${user.email}` },
+        { label: language === "en" ? `Phone: ${user.phone || '+91 Not provided'}` : `फोन: ${user.phone || '+91 प्रदान नहीं किया गया'}` },
       ],
     },
     {
       icon: MapPin,
       title: language === "en" ? "Saved Addresses" : "सहेजे गए पते",
       items: [
-        { label: language === "en" ? "Home - 123 MG Road, Bangalore" : "घर - 123 एमजी रोड, बेंगलुरु" },
-        { label: language === "en" ? "Office - 456 Tech Park, Bangalore" : "कार्यालय - 456 टेक पार्क, बेंगलुरु" },
+        { label: user.address || (language === "en" ? "No address saved" : "कोई पता सहेजा नहीं गया") },
       ],
     },
   ];
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+  };
 
   return (
     <div className="relative min-h-screen pb-24">
@@ -37,21 +66,18 @@ export function SettingsPage() {
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
           <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
             <div className="h-24 w-24 md:h-32 md:w-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-white/30 text-4xl md:text-5xl font-black">
-              PS
+              {getInitials(user.name)}
             </div>
             <div className="text-center md:text-left">
               <h1 className={`${seniorMode ? 'text-5xl mb-2' : 'text-3xl md:text-4xl mb-1'} font-black`}>
-                Priya Sharma
+                {user.name}
               </h1>
               <p className={`${seniorMode ? 'text-2xl opacity-90' : 'text-lg opacity-80'} font-bold`}>
-                +91 98765 43210 • {language === "en" ? "Premium Member" : "प्रीमियम सदस्य"}
+                {user.email} • {language === "en" ? "Member" : "सदस्य"}
               </p>
               <div className="mt-4 flex gap-2 justify-center md:justify-start">
                 <Badge className="bg-white/20 text-white border-none px-3 py-1 text-xs">
-                  5.0 ⭐ {language === "en" ? "Rating" : "रेटिंग"}
-                </Badge>
-                <Badge className="bg-white/20 text-white border-none px-3 py-1 text-xs">
-                  {language === "en" ? "12 Orders this month" : "इस महीने 12 ऑर्डर"}
+                  {language === "en" ? "Verified" : "सत्यापित"}
                 </Badge>
               </div>
             </div>
@@ -145,7 +171,7 @@ export function SettingsPage() {
                 <HelpCircle className="h-6 w-6 mr-3 text-amber-500" />
                 {language === "en" ? "Help Center" : "सहायता केंद्र"}
               </Button>
-              <Button variant="ghost" className="h-16 justify-start font-black text-lg rounded-2xl hover:bg-white/50 text-red-500">
+              <Button onClick={handleLogout} variant="ghost" className="h-16 justify-start font-black text-lg rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-500">
                 <LogOut className="h-6 w-6 mr-3" />
                 {language === "en" ? "Logout" : "लॉगआउट"}
               </Button>
