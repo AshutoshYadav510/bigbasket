@@ -6,17 +6,23 @@ import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { toast } from "sonner";
 import { api, Order } from "../../lib/api";
+import { Link } from "react-router";
 
 export function OrdersPage() {
-  const { addToCart, seniorMode, language } = useApp();
+  const { addToCart, seniorMode, language, user } = useApp();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrders = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+      
       setLoading(true);
       try {
-        const data = await api.getOrders();
+        const data = await api.getOrders(user.id);
         setOrders(data);
       } catch (error) {
         toast.error(language === "en" ? "Failed to load orders" : "ऑर्डर लोड करने में विफल");
@@ -25,7 +31,7 @@ export function OrdersPage() {
       }
     };
     fetchOrders();
-  }, [language]);
+  }, [language, user]);
 
   const handle1TapReorder = (order: Order) => {
     order.items.forEach(item => {
@@ -41,6 +47,22 @@ export function OrdersPage() {
     });
     toast.success(language === "en" ? "Items added to cart - ready to checkout!" : "आइटम कार्ट में जोड़े गए - चेकआउट के लिए तैयार!");
   };
+
+  if (!user) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+        <Package className={`${seniorMode ? 'h-40 w-40' : 'h-24 w-24'} mx-auto mb-6 text-gray-400`} />
+        <h2 className={`${seniorMode ? 'text-5xl mb-6' : 'text-3xl mb-4'} font-bold text-gray-900 dark:text-white`}>
+          {language === "en" ? "Please login to view orders" : "ऑर्डर देखने के लिए कृपया लॉगिन करें"}
+        </h2>
+        <Link to="/login">
+          <Button size="lg" className="mt-4">
+            {language === "en" ? "Login Now" : "अभी लॉगिन करें"}
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

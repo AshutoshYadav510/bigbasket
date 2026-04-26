@@ -8,6 +8,7 @@ import { CheckoutPage } from "./pages/CheckoutPage";
 import { OrdersPage } from "./pages/OrdersPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SupportPage } from "./pages/SupportPage";
+import { LoginPage } from "./pages/LoginPage";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       { path: "orders", Component: OrdersPage },
       { path: "settings", Component: SettingsPage },
       { path: "support", Component: SupportPage },
+      { path: "login", Component: LoginPage },
     ],
   },
 ]);

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { CreditCard, MapPin, Clock, Check } from "lucide-react";
+import { CreditCard, MapPin, Clock, Check, UserPlus } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -10,11 +10,18 @@ import { toast } from "sonner";
 import { api } from "../../lib/api";
 
 export function CheckoutPage() {
-  const { cart, clearCart, seniorMode, language } = useApp();
+  const { cart, clearCart, seniorMode, language, user } = useApp();
   const navigate = useNavigate();
   const [selectedPayment, setSelectedPayment] = useState<string>("upi");
   const [upiId, setUpiId] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [address, setAddress] = useState("123 MG Road, Bangalore, Karnataka 560001");
+
+  useEffect(() => {
+    if (user?.address) {
+      setAddress(user.address);
+    }
+  }, [user]);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = total >= 200 ? 0 : 40;
@@ -32,6 +39,12 @@ export function CheckoutPage() {
   ];
 
   const handlePlaceOrder = async () => {
+    if (!user) {
+      toast.error(language === "en" ? "Please login to place an order" : "ऑर्डर देने के लिए कृपया लॉगिन करें");
+      navigate("/login");
+      return;
+    }
+
     if (selectedPayment === "upi" && !upiId.trim()) {
       toast.error(language === "en" ? "Please enter UPI ID" : "कृपया UPI ID दर्ज करें");
       return;
@@ -50,7 +63,7 @@ export function CheckoutPage() {
         quantity: item.quantity
       }));
       
-      await api.createOrder(orderItems, "123 MG Road, Bangalore, Karnataka 560001");
+      await api.createOrder(orderItems, user.id, address);
 
       toast.success(language === "en" ? "Order placed successfully!" : "ऑर्डर सफलतापूर्वक रखा गया!");
       clearCart();
@@ -68,6 +81,23 @@ export function CheckoutPage() {
         {language === "en" ? "Checkout" : "चेकआउट"}
       </h1>
 
+      {!user && (
+        <Card className="p-6 mb-8 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100">
+              {language === "en" ? "Login for faster checkout" : "तेज चेकआउट के लिए लॉगिन करें"}
+            </h3>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              {language === "en" ? "Save your address and track orders easily." : "अपना पता सहेजें और ऑर्डर आसानी से ट्रैक करें।"}
+            </p>
+          </div>
+          <Button onClick={() => navigate("/login")} className="bg-blue-600 hover:bg-blue-700">
+            <UserPlus className="h-4 w-4 mr-2" />
+            {language === "en" ? "Login" : "लॉगिन"}
+          </Button>
+        </Card>
+      )}
+
       <div className={`grid ${seniorMode ? 'grid-cols-1 gap-8' : 'lg:grid-cols-3 gap-8'}`}>
         {/* Checkout Form */}
         <div className={seniorMode ? 'space-y-8' : 'lg:col-span-2 space-y-6'}>
@@ -79,13 +109,16 @@ export function CheckoutPage() {
                 {language === "en" ? "Delivery Address" : "डिलीवरी पता"}
               </h2>
             </div>
-            <Card className={`${seniorMode ? 'p-6' : 'p-4'} bg-gray-50 dark:bg-gray-900`}>
-              <p className={`${seniorMode ? 'text-2xl' : 'text-base'} text-gray-900 dark:text-white`}>
-                Home<br />
-                123 MG Road, Bangalore<br />
-                Karnataka 560001
-              </p>
-            </Card>
+            <div className="space-y-4">
+              <Label htmlFor="address">{language === "en" ? "Full Address" : "पूरा पता"}</Label>
+              <Input
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className={`bg-gray-50 dark:bg-gray-900 ${seniorMode ? 'py-8 text-xl' : ''}`}
+                placeholder="123 Street Name, City, PIN"
+              />
+            </div>
           </Card>
 
           {/* Delivery Slot */}
@@ -226,3 +259,4 @@ export function CheckoutPage() {
     </div>
   );
 }
+

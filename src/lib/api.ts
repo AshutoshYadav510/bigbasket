@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001/api";
 
 export interface Product {
@@ -9,6 +10,14 @@ export interface Product {
   description: string;
   unit: string;
   inStock: boolean;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  address?: string | null;
 }
 
 export interface OrderItem {
@@ -30,6 +39,34 @@ export interface Order {
 }
 
 export const api = {
+  loginUser: async (email: string) => {
+    const res = await fetch(`${API_URL}/users/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    if (!res.ok) {
+      if (res.status === 404) return null; // user not found
+      throw new Error("Failed to login");
+    }
+    const data = await res.json();
+    return data.data as User;
+  },
+
+  registerUser: async (name: string, email: string, phone?: string) => {
+    const res = await fetch(`${API_URL}/users`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone }),
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Failed to register");
+    }
+    const data = await res.json();
+    return data.data as User;
+  },
+
   getProducts: async (category?: string, search?: string) => {
     const params = new URLSearchParams();
     if (category && category !== "all") params.append("category", category);
@@ -48,11 +85,11 @@ export const api = {
     return data.data as Product;
   },
 
-  createOrder: async (items: { productId: string; quantity: number }[], address?: string) => {
+  createOrder: async (items: { productId: string; quantity: number }[], userId?: string, address?: string) => {
     const res = await fetch(`${API_URL}/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items, address }),
+      body: JSON.stringify({ items, userId, address }),
     });
     if (!res.ok) {
       const errorData = await res.json();
@@ -62,11 +99,14 @@ export const api = {
     return data.data as Order;
   },
 
-  getOrders: async () => {
-    // In a real app we would pass userId, for now we fetch all orders
-    const res = await fetch(`${API_URL}/orders`);
+  getOrders: async (userId?: string) => {
+    const params = new URLSearchParams();
+    if (userId) params.append("userId", userId);
+    
+    const res = await fetch(`${API_URL}/orders?${params.toString()}`);
     if (!res.ok) throw new Error("Failed to fetch orders");
     const data = await res.json();
     return data.data as Order[];
   },
 };
+

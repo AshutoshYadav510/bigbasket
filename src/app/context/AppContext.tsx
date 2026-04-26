@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { User } from "../../lib/api";
 
 interface CartItem {
   id: string;
@@ -15,6 +16,9 @@ interface AppContextType {
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
+  user: User | null;
+  login: (user: User) => void;
+  logout: () => void;
   seniorMode: boolean;
   toggleSeniorMode: () => void;
   darkMode: boolean;
@@ -27,6 +31,10 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem("bb_user");
+    return saved ? JSON.parse(saved) : null;
+  });
   const [seniorMode, setSeniorMode] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<"en" | "hi">("en");
@@ -38,6 +46,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
       document.documentElement.classList.remove("dark");
     }
   }, [darkMode]);
+
+  const login = (newUser: User) => {
+    setUser(newUser);
+    localStorage.setItem("bb_user", JSON.stringify(newUser));
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("bb_user");
+  };
 
   const addToCart = (item: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
@@ -81,6 +99,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        user,
+        login,
+        logout,
         seniorMode,
         toggleSeniorMode,
         darkMode,
@@ -101,4 +122,5 @@ export function useApp() {
   }
   return context;
 }
+
 

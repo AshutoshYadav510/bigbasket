@@ -39,6 +39,26 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
+// POST /api/users/login - Login a user
+router.post("/login", async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, error: "email is required" });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    res.json({ success: true, data: user });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Failed to login" });
+  }
+});
+
 // POST /api/users - Create a user
 router.post("/", async (req: Request, res: Response) => {
   try {
@@ -78,3 +98,4 @@ router.patch("/:id", async (req: Request, res: Response) => {
 });
 
 export default router;
+
