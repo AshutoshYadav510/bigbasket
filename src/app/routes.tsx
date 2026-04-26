@@ -9,6 +9,7 @@ import { OrdersPage } from "./pages/OrdersPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SupportPage } from "./pages/SupportPage";
 import { LoginPage } from "./pages/LoginPage";
+import { SignupPage } from "./pages/SignupPage";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: "settings", Component: SettingsPage },
       { path: "support", Component: SupportPage },
       { path: "login", Component: LoginPage },
+      { path: "signup", Component: SignupPage },
     ],
   },
 ]);
