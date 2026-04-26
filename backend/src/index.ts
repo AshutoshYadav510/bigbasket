@@ -44,26 +44,14 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   res.status(500).json({ error: "Internal server error", message: err.message });
 });
 
-// Start server
-async function main() {
-  try {
-    await prisma.$connect();
-    console.log("✅ Connected to Neon PostgreSQL database");
-    app.listen(PORT, () => {
-      console.log(`🚀 BigBasket Backend running at http://localhost:${PORT}`);
-      console.log(`📦 API base: http://localhost:${PORT}/api`);
-    });
-  } catch (error) {
-    console.error("❌ Failed to connect to database:", error);
-    process.exit(1);
-  }
+// Start server (Local only)
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`🚀 BigBasket Backend running at http://localhost:${PORT}`);
+    console.log(`📦 API base: http://localhost:${PORT}/api`);
+  });
 }
 
-main();
+// Export for Vercel Serverless Functions
+export default app;
 
-// Graceful shutdown
-process.on("SIGINT", async () => {
-  await prisma.$disconnect();
-  console.log("🔌 Disconnected from database");
-  process.exit(0);
-});
