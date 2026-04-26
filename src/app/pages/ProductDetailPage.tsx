@@ -1,39 +1,74 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router";
-import { ArrowLeft, CheckCircle, AlertCircle, Truck, Shield } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertCircle, Truck, Shield, Loader2 } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { toast } from "sonner";
-
-const mockProductDetails: Record<string, any> = {
-  p1: { id: "p1", name: "Organic Tomatoes", price: 45, unit: "500g", image: "/images/product_tomatoes.png", inStock: true, quality: "Premium", description: "Fresh organic tomatoes sourced directly from certified farms. Rich in vitamins and antioxidants.", nutritionFacts: "Calories: 18 per 100g • Vitamin C: 21% DV • Fiber: 1.2g", origin: "Maharashtra Farms" },
-  p2: { id: "p2", name: "Fresh Milk", price: 60, unit: "1L", image: "/images/product_milk.png", inStock: true, quality: "Farm Fresh", description: "Farm fresh cow milk, pasteurized and homogenized for safety. Pure and nutritious.", nutritionFacts: "Calories: 42 per 100g • Protein: 3.4g • Calcium: 120mg", origin: "Local Dairy" },
-  p3: { id: "p3", name: "Basmati Rice", price: 180, unit: "1kg", image: "/images/product_rice.png", inStock: false, quality: "Premium", description: "Aromatic long-grain basmati rice. Aged for perfection and superior taste.", nutritionFacts: "Calories: 350 per 100g • Carbs: 78g • Protein: 7g", origin: "Punjab Grains" },
-  p4: { id: "p4", name: "Whole Wheat Bread", price: 40, unit: "400g", image: "/images/product_bread.png", inStock: true, quality: "Freshly Baked", description: "Hearty whole wheat bread baked fresh every day. No preservatives.", nutritionFacts: "Calories: 250 per 100g • Fiber: 7g • Iron: 15% DV", origin: "City Bakery" },
-  p5: { id: "p5", name: "Fresh Spinach", price: 30, unit: "250g", image: "/images/product_spinach.png", inStock: true, quality: "Organic", description: "Tender and vibrant spinach leaves. Perfect for salads or cooking.", nutritionFacts: "Calories: 23 per 100g • Iron: 15% DV • Vitamin K: 460% DV", origin: "Organic Gardens" },
-  p6: { id: "p6", name: "Greek Yogurt", price: 80, unit: "400g", image: "/images/product_yogurt.png", inStock: true, quality: "Probiotic", description: "Creamy and thick Greek yogurt with live probiotics. Great for gut health.", nutritionFacts: "Calories: 59 per 100g • Protein: 10g • Fat: 0.4g", origin: "Premium Dairy" },
-};
-
+import { api, Product } from "../../lib/api";
 
 export function ProductDetailPage() {
   const { id } = useParams();
   const { addToCart, seniorMode, language } = useApp();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = mockProductDetails[id || "p1"] || mockProductDetails.p1;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) return;
+      setLoading(true);
+      try {
+        const data = await api.getProduct(id);
+        setProduct(data);
+      } catch (error) {
+        toast.error(language === "en" ? "Failed to load product details" : "उत्पाद विवरण लोड करने में विफल");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id, language]);
 
   const handleAddToCart = () => {
+    if (!product) return;
     if (!product.inStock) {
       toast.error(language === "en" ? "Out of stock" : "स्टॉक में नहीं");
       return;
     }
-    addToCart(product);
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      inStock: product.inStock,
+    });
     toast.success(language === "en" ? "Added to cart" : "कार्ट में जोड़ा गया");
   };
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <Loader2 className="h-16 w-16 animate-spin text-green-600" />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-2xl font-bold text-gray-700">
+          {language === "en" ? "Product not found" : "उत्पाद नहीं मिला"}
+        </h2>
+        <Link to="/">
+          <Button className="mt-4">{language === "en" ? "Return Home" : "होम पर लौटें"}</Button>
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen pb-24">
-
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Link to="/">
           <Button variant="ghost" size={seniorMode ? "lg" : "default"} className={`${seniorMode ? 'text-xl mb-8' : 'mb-6'} rounded-full hover:bg-white/50 dark:hover:bg-gray-800/50 backdrop-blur-sm`}>
@@ -83,7 +118,7 @@ export function ProductDetailPage() {
               </div>
 
               <p className={`${seniorMode ? 'text-2xl mb-8' : 'text-lg mb-6'} text-gray-600 dark:text-gray-400 font-medium leading-relaxed`}>
-                {product.description}
+                {product.description || "Fresh produce delivered to your doorstep."}
               </p>
             </div>
 
@@ -113,16 +148,8 @@ export function ProductDetailPage() {
                 <h3 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-4">Product Details</h3>
                 <div className="grid gap-4">
                   <div className="flex justify-between border-b border-gray-100 dark:border-gray-800 pb-2">
-                    <span className="font-bold text-gray-500">Origin</span>
-                    <span className="font-bold">{product.origin}</span>
-                  </div>
-                  <div className="flex justify-between border-b border-gray-100 dark:border-gray-800 pb-2">
-                    <span className="font-bold text-gray-500">Quality</span>
-                    <span className="font-bold text-green-600">{product.quality}</span>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span className="font-bold text-gray-500">Nutrition</span>
-                    <span className="font-bold text-sm text-gray-700 dark:text-gray-300">{product.nutritionFacts}</span>
+                    <span className="font-bold text-gray-500">Category</span>
+                    <span className="font-bold text-green-600">{product.category}</span>
                   </div>
                 </div>
               </div>

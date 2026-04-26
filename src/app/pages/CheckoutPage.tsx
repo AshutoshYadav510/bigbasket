@@ -7,6 +7,7 @@ import { Card } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { toast } from "sonner";
+import { api } from "../../lib/api";
 
 export function CheckoutPage() {
   const { cart, clearCart, seniorMode, language } = useApp();
@@ -36,15 +37,29 @@ export function CheckoutPage() {
       return;
     }
 
+    if (cart.length === 0) {
+      toast.error(language === "en" ? "Cart is empty" : "कार्ट खाली है");
+      return;
+    }
+
     setIsProcessing(true);
 
-    // Simulate payment processing
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const orderItems = cart.map(item => ({
+        productId: item.id,
+        quantity: item.quantity
+      }));
+      
+      await api.createOrder(orderItems, "123 MG Road, Bangalore, Karnataka 560001");
 
-    toast.success(language === "en" ? "Order placed successfully!" : "ऑर्डर सफलतापूर्वक रखा गया!");
-    clearCart();
-    setIsProcessing(false);
-    navigate("/orders");
+      toast.success(language === "en" ? "Order placed successfully!" : "ऑर्डर सफलतापूर्वक रखा गया!");
+      clearCart();
+      navigate("/orders");
+    } catch (error: any) {
+      toast.error(error.message || (language === "en" ? "Failed to place order" : "ऑर्डर देने में विफल"));
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

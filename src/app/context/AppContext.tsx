@@ -9,21 +9,12 @@ interface CartItem {
   inStock: boolean;
 }
 
-interface Order {
-  id: string;
-  date: string;
-  items: CartItem[];
-  total: number;
-}
-
 interface AppContextType {
   cart: CartItem[];
   addToCart: (item: Omit<CartItem, "quantity">) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
-  orders: Order[];
-  reorder: (orderId: string) => void;
   seniorMode: boolean;
   toggleSeniorMode: () => void;
   darkMode: boolean;
@@ -36,17 +27,6 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "ord-001",
-      date: "2026-04-15",
-      items: [
-        { id: "p1", name: "Organic Tomatoes", price: 45, quantity: 2, image: "/images/product_tomatoes.png", inStock: true },
-        { id: "p2", name: "Fresh Milk", price: 60, quantity: 1, image: "/images/product_milk.png", inStock: true },
-      ],
-      total: 150,
-    },
-  ]);
   const [seniorMode, setSeniorMode] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState<"en" | "hi">("en");
@@ -89,13 +69,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setCart([]);
   };
 
-  const reorder = (orderId: string) => {
-    const order = orders.find((o) => o.id === orderId);
-    if (order) {
-      setCart(order.items);
-    }
-  };
-
   const toggleSeniorMode = () => setSeniorMode(!seniorMode);
   const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleLanguage = () => setLanguage((prev) => (prev === "en" ? "hi" : "en"));
@@ -108,8 +81,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         removeFromCart,
         updateQuantity,
         clearCart,
-        orders,
-        reorder,
         seniorMode,
         toggleSeniorMode,
         darkMode,
@@ -130,3 +101,4 @@ export function useApp() {
   }
   return context;
 }
+
