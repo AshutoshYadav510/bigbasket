@@ -28,7 +28,7 @@ export function CheckoutPage() {
   const finalTotal = total + deliveryFee;
 
   const paymentMethods = [
-    { id: "upi", name: language === "en" ? "UPI (Google Pay, PhonePe, Paytm)" : "UPI (गूगल पे, फोनपे, पेटीएम)", icon: "💳", popular: true },
+    { id: "upi", name: language === "en" ? "UPI (GPay, PhonePe, Paytm)" : "UPI (गूगल पे, फोनपे)", icon: "💳", popular: true },
     { id: "phonepe", name: language === "en" ? "PhonePe" : "फोनपे", icon: "📱", popular: true },
     { id: "googlepay", name: language === "en" ? "Google Pay" : "गूगल पे", icon: "🔵", popular: true },
     { id: "paytm", name: language === "en" ? "Paytm" : "पेटीएम", icon: "💙", popular: false },
@@ -76,104 +76,110 @@ export function CheckoutPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className={`${seniorMode ? 'text-5xl mb-10' : 'text-3xl mb-8'} font-bold text-gray-900 dark:text-white`}>
+    <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8 pb-32">
+      <h1 className={`${seniorMode ? 'text-4xl md:text-5xl mb-8 md:mb-10' : 'text-3xl md:text-4xl mb-6 md:mb-8'} font-black text-gray-900 dark:text-white tracking-tight`}>
         {language === "en" ? "Checkout" : "चेकआउट"}
       </h1>
 
       {!user && (
-        <Card className="p-6 mb-8 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 flex items-center justify-between">
+        <Card className="p-5 md:p-6 mb-6 md:mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-none rounded-[1.5rem] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100">
+            <h3 className="text-lg font-bold text-blue-900 dark:text-blue-100 mb-1">
               {language === "en" ? "Login for faster checkout" : "तेज चेकआउट के लिए लॉगिन करें"}
             </h3>
-            <p className="text-sm text-blue-700 dark:text-blue-300">
+            <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">
               {language === "en" ? "Save your address and track orders easily." : "अपना पता सहेजें और ऑर्डर आसानी से ट्रैक करें।"}
             </p>
           </div>
-          <Button onClick={() => navigate("/login")} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => navigate("/login")} className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg shadow-blue-600/20 whitespace-nowrap">
             <UserPlus className="h-4 w-4 mr-2" />
-            {language === "en" ? "Login" : "लॉगिन"}
+            {language === "en" ? "Login Now" : "अभी लॉगिन करें"}
           </Button>
         </Card>
       )}
 
-      <div className={`grid ${seniorMode ? 'grid-cols-1 gap-8' : 'lg:grid-cols-3 gap-8'}`}>
+      <div className={`flex flex-col-reverse lg:grid ${seniorMode ? 'grid-cols-1 gap-8' : 'lg:grid-cols-3 gap-6 lg:gap-8'}`}>
         {/* Checkout Form */}
         <div className={seniorMode ? 'space-y-8' : 'lg:col-span-2 space-y-6'}>
           {/* Delivery Address */}
-          <Card className={`${seniorMode ? 'p-8' : 'p-6'}`}>
+          <Card className={`${seniorMode ? 'p-6 md:p-8 rounded-[2rem]' : 'p-5 md:p-6 rounded-[1.5rem]'} bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-white/40 dark:border-gray-800/60 shadow-xl`}>
             <div className="flex items-center gap-3 mb-6">
-              <MapPin className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'} text-green-600`} />
-              <h2 className={`${seniorMode ? 'text-3xl' : 'text-xl'} font-semibold text-gray-900 dark:text-white`}>
+              <div className="p-2.5 bg-green-100 dark:bg-green-900/50 rounded-2xl">
+                <MapPin className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'} text-green-600 dark:text-green-400`} />
+              </div>
+              <h2 className={`${seniorMode ? 'text-3xl' : 'text-xl md:text-2xl'} font-black text-gray-900 dark:text-white`}>
                 {language === "en" ? "Delivery Address" : "डिलीवरी पता"}
               </h2>
             </div>
-            <div className="space-y-4">
-              <Label htmlFor="address">{language === "en" ? "Full Address" : "पूरा पता"}</Label>
+            <div className="space-y-3 md:space-y-4">
+              <Label htmlFor="address" className="text-gray-600 dark:text-gray-400 font-medium">
+                {language === "en" ? "Full Address" : "पूरा पता"}
+              </Label>
               <Input
                 id="address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className={`bg-gray-50 dark:bg-gray-900 ${seniorMode ? 'py-8 text-xl' : ''}`}
+                className={`bg-gray-50/80 dark:bg-gray-800/80 border-gray-200 dark:border-gray-700 focus:bg-white dark:focus:bg-gray-900 rounded-xl transition-all shadow-inner ${seniorMode ? 'py-8 text-xl' : 'py-6'}`}
                 placeholder="123 Street Name, City, PIN"
               />
             </div>
           </Card>
 
           {/* Delivery Slot */}
-          <Card className={`${seniorMode ? 'p-8' : 'p-6'}`}>
-            <div className="flex items-center gap-3 mb-6">
-              <Clock className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'} text-blue-600`} />
-              <h2 className={`${seniorMode ? 'text-3xl' : 'text-xl'} font-semibold text-gray-900 dark:text-white`}>
+          <Card className={`${seniorMode ? 'p-6 md:p-8 rounded-[2rem]' : 'p-5 md:p-6 rounded-[1.5rem]'} bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-white/40 dark:border-gray-800/60 shadow-xl`}>
+            <div className="flex items-center gap-3 mb-5 md:mb-6">
+              <div className="p-2.5 bg-blue-100 dark:bg-blue-900/50 rounded-2xl">
+                <Clock className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'} text-blue-600 dark:text-blue-400`} />
+              </div>
+              <h2 className={`${seniorMode ? 'text-3xl' : 'text-xl md:text-2xl'} font-black text-gray-900 dark:text-white`}>
                 {language === "en" ? "Delivery Slot" : "डिलीवरी स्लॉट"}
               </h2>
             </div>
-            <Card className={`${seniorMode ? 'p-6' : 'p-4'} bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800`}>
-              <p className={`${seniorMode ? 'text-2xl' : 'text-base'} text-green-900 dark:text-green-100 font-medium`}>
+            <Card className={`${seniorMode ? 'p-5 md:p-6' : 'p-4 md:p-5'} bg-green-50/80 dark:bg-green-900/20 border-green-200 dark:border-green-800/50 rounded-xl`}>
+              <p className={`${seniorMode ? 'text-2xl' : 'text-base md:text-lg'} text-green-800 dark:text-green-300 font-bold`}>
                 {language === "en" ? "Tomorrow, 7:00 AM - 9:00 AM" : "कल, सुबह 7:00 - सुबह 9:00"}
               </p>
             </Card>
           </Card>
 
           {/* Payment Method */}
-          <Card className={`${seniorMode ? 'p-8' : 'p-6'}`}>
+          <Card className={`${seniorMode ? 'p-6 md:p-8 rounded-[2rem]' : 'p-5 md:p-6 rounded-[1.5rem]'} bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-white/40 dark:border-gray-800/60 shadow-xl`}>
             <div className="flex items-center gap-3 mb-6">
-              <CreditCard className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'} text-purple-600`} />
-              <h2 className={`${seniorMode ? 'text-3xl' : 'text-xl'} font-semibold text-gray-900 dark:text-white`}>
+              <div className="p-2.5 bg-purple-100 dark:bg-purple-900/50 rounded-2xl">
+                <CreditCard className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'} text-purple-600 dark:text-purple-400`} />
+              </div>
+              <h2 className={`${seniorMode ? 'text-3xl' : 'text-xl md:text-2xl'} font-black text-gray-900 dark:text-white`}>
                 {language === "en" ? "Payment Method" : "भुगतान विधि"}
               </h2>
             </div>
 
-            <div className={`space-y-${seniorMode ? '4' : '3'}`}>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 gap-${seniorMode ? '4' : '3'}`}>
               {paymentMethods.map((method) => (
                 <Card
                   key={method.id}
                   onClick={() => setSelectedPayment(method.id)}
-                  className={`${seniorMode ? 'p-4 md:p-6' : 'p-3 md:p-4'} cursor-pointer transition-all ${
+                  className={`${seniorMode ? 'p-4 md:p-5' : 'p-3 md:p-4'} cursor-pointer rounded-xl transition-all duration-300 border-2 ${
                     selectedPayment === method.id
-                      ? "bg-green-50 dark:bg-green-950 border-green-500"
-                      : "hover:bg-gray-50 dark:hover:bg-gray-900"
+                      ? "bg-green-50/80 dark:bg-green-900/20 border-green-500 dark:border-green-500 shadow-md shadow-green-500/10 scale-[1.02]"
+                      : "bg-gray-50/50 dark:bg-gray-800/50 border-transparent hover:bg-gray-100 dark:hover:bg-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <span className={seniorMode ? 'text-3xl md:text-5xl' : 'text-2xl md:text-3xl'}>{method.icon}</span>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className={`${seniorMode ? 'text-xl md:text-2xl' : 'text-sm md:text-base'} font-medium text-gray-900 dark:text-white`}>
-                            {method.name}
+                    <div className="flex items-center gap-3">
+                      <span className={seniorMode ? 'text-3xl' : 'text-2xl'}>{method.icon}</span>
+                      <div className="flex flex-col items-start gap-1">
+                        <span className={`${seniorMode ? 'text-lg md:text-xl' : 'text-sm font-bold'} text-gray-900 dark:text-white line-clamp-1`}>
+                          {method.name}
+                        </span>
+                        {method.popular && (
+                          <span className={`${seniorMode ? 'text-xs px-2 py-0.5' : 'text-[10px] px-1.5 py-0.5'} bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded font-black uppercase tracking-wider`}>
+                            {language === "en" ? "Popular" : "लोकप्रिय"}
                           </span>
-                          {method.popular && (
-                            <span className={`${seniorMode ? 'text-xs md:text-sm px-2 py-1' : 'text-xs px-1.5 py-0.5'} bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded`}>
-                              {language === "en" ? "Popular" : "लोकप्रिय"}
-                            </span>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </div>
                     {selectedPayment === method.id && (
-                      <Check className={`${seniorMode ? 'h-6 w-6 md:h-8 md:w-8' : 'h-5 w-5 md:h-6 md:w-6'} text-green-600`} />
+                      <Check className={`${seniorMode ? 'h-6 w-6' : 'h-5 w-5'} text-green-600 flex-shrink-0`} />
                     )}
                   </div>
                 </Card>
@@ -181,8 +187,8 @@ export function CheckoutPage() {
             </div>
 
             {selectedPayment === "upi" && (
-              <div className={`${seniorMode ? 'mt-8' : 'mt-6'}`}>
-                <Label htmlFor="upi" className={`${seniorMode ? 'text-2xl mb-4' : 'mb-2'} block`}>
+              <div className={`${seniorMode ? 'mt-8' : 'mt-6'} p-4 md:p-5 bg-gray-50/80 dark:bg-gray-800/50 rounded-2xl`}>
+                <Label htmlFor="upi" className={`${seniorMode ? 'text-2xl mb-4' : 'mb-3 font-bold text-gray-700 dark:text-gray-300'} block`}>
                   {language === "en" ? "Enter UPI ID" : "UPI ID दर्ज करें"}
                 </Label>
                 <Input
@@ -191,70 +197,81 @@ export function CheckoutPage() {
                   placeholder="yourname@upi"
                   value={upiId}
                   onChange={(e) => setUpiId(e.target.value)}
-                  className={seniorMode ? 'text-2xl py-6' : ''}
+                  className={`bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 rounded-xl shadow-inner ${seniorMode ? 'text-2xl py-6' : 'py-5 font-medium'}`}
                 />
               </div>
             )}
           </Card>
         </div>
 
-        {/* Order Summary */}
-        <Card className={`${seniorMode ? 'p-8' : 'p-6'} h-fit sticky top-24`}>
-          <h2 className={`${seniorMode ? 'text-4xl mb-8' : 'text-2xl mb-6'} font-bold text-gray-900 dark:text-white`}>
-            {language === "en" ? "Order Summary" : "ऑर्डर सारांश"}
-          </h2>
+        {/* Order Summary Sidebar */}
+        <div className="relative">
+          <Card className={`${seniorMode ? 'p-6 md:p-8 rounded-[2rem]' : 'p-5 md:p-6 rounded-[1.5rem]'} bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl border-white/40 dark:border-gray-800/60 shadow-2xl h-fit lg:sticky lg:top-24`}>
+            {/* Decorative Blur blob */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-300/20 to-blue-300/20 rounded-full blur-2xl -z-10" />
 
-          <div className={`space-y-${seniorMode ? '6' : '4'} mb-6`}>
-            {cart.map((item) => (
-              <div key={item.id} className="flex justify-between">
-                <span className={`${seniorMode ? 'text-2xl' : 'text-sm'} text-gray-600 dark:text-gray-400`}>
-                  {item.name} x{item.quantity}
-                </span>
-                <span className={`${seniorMode ? 'text-2xl' : 'text-sm'} font-medium text-gray-900 dark:text-white`}>
-                  ₹{item.price * item.quantity}
-                </span>
-              </div>
-            ))}
+            <h2 className={`${seniorMode ? 'text-3xl mb-8' : 'text-xl md:text-2xl mb-6'} font-black text-gray-900 dark:text-white`}>
+              {language === "en" ? "Order Summary" : "ऑर्डर सारांश"}
+            </h2>
 
-            <div className={`pt-${seniorMode ? '6' : '4'} border-t border-gray-200 dark:border-gray-700 space-y-3`}>
-              <div className="flex justify-between">
-                <span className={`${seniorMode ? 'text-2xl' : 'text-base'} text-gray-600 dark:text-gray-400`}>
-                  {language === "en" ? "Subtotal" : "उप-योग"}
-                </span>
-                <span className={`${seniorMode ? 'text-2xl' : 'text-base'} font-semibold text-gray-900 dark:text-white`}>
-                  ₹{total}
-                </span>
+            <div className={`space-y-${seniorMode ? '6' : '4'} mb-6 md:mb-8`}>
+              <div className="max-h-[30vh] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                {cart.map((item) => (
+                  <div key={item.id} className="flex justify-between items-start gap-4">
+                    <span className={`${seniorMode ? 'text-xl' : 'text-sm'} text-gray-600 dark:text-gray-400 font-medium leading-tight`}>
+                      {item.name} <span className="text-gray-400 dark:text-gray-500 font-black ml-1">x{item.quantity}</span>
+                    </span>
+                    <span className={`${seniorMode ? 'text-xl' : 'text-sm'} font-bold text-gray-900 dark:text-white whitespace-nowrap`}>
+                      ₹{item.price * item.quantity}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="flex justify-between">
-                <span className={`${seniorMode ? 'text-2xl' : 'text-base'} text-gray-600 dark:text-gray-400`}>
-                  {language === "en" ? "Delivery" : "डिलीवरी"}
-                </span>
-                <span className={`${seniorMode ? 'text-2xl' : 'text-base'} font-semibold ${deliveryFee === 0 ? 'text-green-600' : 'text-gray-900 dark:text-white'}`}>
-                  {deliveryFee === 0 ? (language === "en" ? "FREE" : "मुफ्त") : `₹${deliveryFee}`}
-                </span>
-              </div>
-              <div className={`pt-${seniorMode ? '6' : '4'} border-t border-gray-200 dark:border-gray-700 flex justify-between`}>
-                <span className={`${seniorMode ? 'text-3xl' : 'text-xl'} font-bold text-gray-900 dark:text-white`}>
-                  {language === "en" ? "Total" : "कुल"}
-                </span>
-                <span className={`${seniorMode ? 'text-3xl' : 'text-xl'} font-bold text-green-600 dark:text-green-400`}>
-                  ₹{finalTotal}
-                </span>
+
+              <div className={`pt-${seniorMode ? '6' : '4'} border-t border-gray-200 dark:border-gray-800 space-y-3`}>
+                <div className="flex justify-between">
+                  <span className={`${seniorMode ? 'text-2xl' : 'text-sm md:text-base'} text-gray-500 dark:text-gray-400 font-medium`}>
+                    {language === "en" ? "Subtotal" : "उप-योग"}
+                  </span>
+                  <span className={`${seniorMode ? 'text-2xl' : 'text-sm md:text-base'} font-bold text-gray-900 dark:text-white`}>
+                    ₹{total}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className={`${seniorMode ? 'text-2xl' : 'text-sm md:text-base'} text-gray-500 dark:text-gray-400 font-medium`}>
+                    {language === "en" ? "Delivery" : "डिलीवरी"}
+                  </span>
+                  <span className={`${seniorMode ? 'text-2xl' : 'text-sm md:text-base'} font-black ${deliveryFee === 0 ? 'text-green-600' : 'text-gray-900 dark:text-white'}`}>
+                    {deliveryFee === 0 ? (language === "en" ? "FREE" : "मुफ्त") : `₹${deliveryFee}`}
+                  </span>
+                </div>
+                
+                <div className={`pt-${seniorMode ? '6' : '4'} mt-2 border-t border-gray-200 dark:border-gray-800 flex justify-between items-end`}>
+                  <div className="flex flex-col">
+                    <span className={`${seniorMode ? 'text-3xl' : 'text-xl md:text-2xl'} font-black text-gray-900 dark:text-white`}>
+                      {language === "en" ? "Total" : "कुल"}
+                    </span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">Incl. of all taxes</span>
+                  </div>
+                  <span className={`${seniorMode ? 'text-4xl' : 'text-2xl md:text-3xl'} font-black text-green-600 dark:text-green-400 tracking-tight`}>
+                    ₹{finalTotal}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <Button
-            onClick={handlePlaceOrder}
-            disabled={isProcessing}
-            size={seniorMode ? "lg" : "lg"}
-            className={`w-full ${seniorMode ? 'text-2xl py-8' : ''}`}
-          >
-            {isProcessing
-              ? (language === "en" ? "Processing..." : "प्रोसेसिंग...")
-              : (language === "en" ? `Pay ₹${finalTotal}` : `₹${finalTotal} भुगतान करें`)}
-          </Button>
-        </Card>
+            <Button
+              onClick={handlePlaceOrder}
+              disabled={isProcessing}
+              size={seniorMode ? "lg" : "default"}
+              className={`w-full rounded-2xl shadow-xl shadow-green-600/20 transition-all active:scale-95 bg-green-600 hover:bg-green-700 text-white font-black ${seniorMode ? 'text-2xl py-8' : 'text-lg py-7'}`}
+            >
+              {isProcessing
+                ? (language === "en" ? "Processing..." : "प्रोसेसिंग...")
+                : (language === "en" ? `Pay ₹${finalTotal}` : `₹${finalTotal} भुगतान करें`)}
+            </Button>
+          </Card>
+        </div>
       </div>
     </div>
   );

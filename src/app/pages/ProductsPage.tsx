@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router";
-import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { useParams, useSearchParams, Link } from "react-router";
+import { AlertCircle, CheckCircle, Loader2, SearchX } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -10,6 +10,9 @@ import { api, Product } from "../../lib/api";
 
 export function ProductsPage() {
   const { category } = useParams();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get("search") || undefined;
+  
   const { addToCart, seniorMode, language } = useApp();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +30,7 @@ export function ProductsPage() {
         if (category === "beverages") dbCategory = "Snacks & Beverages";
         if (category === "grains") dbCategory = "Staples";
 
-        const data = await api.getProducts(category === "all" ? undefined : dbCategory);
+        const data = await api.getProducts(category === "all" ? undefined : dbCategory, searchQuery);
         setProducts(data);
       } catch (error) {
         toast.error(language === "en" ? "Failed to load products" : "उत्पाद लोड करने में विफल");
@@ -36,7 +39,7 @@ export function ProductsPage() {
       }
     };
     fetchProducts();
-  }, [category, language]);
+  }, [category, searchQuery, language]);
 
   const handleAddToCart = (product: Product) => {
     if (!product.inStock) {
@@ -55,48 +58,86 @@ export function ProductsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-3 md:px-4 py-4 md:py-8">
-      <h1 className={`${seniorMode ? 'text-3xl md:text-5xl mb-6 md:mb-10' : 'text-2xl md:text-3xl mb-4 md:mb-8'} font-bold text-gray-900 dark:text-white capitalize`}>
-        {category === "all" ? (language === "en" ? "All Products" : "सभी उत्पाद") : category}
-      </h1>
+    <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-4">
+        <div>
+          <h1 className={`${seniorMode ? 'text-4xl md:text-6xl' : 'text-3xl md:text-5xl'} font-black text-gray-900 dark:text-white capitalize tracking-tight`}>
+            {searchQuery 
+              ? (language === "en" ? `Search: "${searchQuery}"` : `खोज: "${searchQuery}"`)
+              : category === "all" ? (language === "en" ? "All Products" : "सभी उत्पाद") : category}
+          </h1>
+          {searchQuery && (
+            <p className="mt-2 text-gray-500 dark:text-gray-400 font-medium">
+              {products.length} {language === "en" ? "results found" : "परिणाम मिले"}
+            </p>
+          )}
+        </div>
+      </div>
 
       {/* Stock Integrity Notice */}
-      <Card className={`${seniorMode ? 'p-6 md:p-8 mb-8 md:mb-12 text-lg md:text-xl' : 'p-3 md:p-4 mb-6 md:mb-8'} bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800`}>
-        <p className="text-blue-900 dark:text-blue-100">
-          {language === "en"
-            ? "✓ Real-time stock updates • All prices include taxes"
-            : "✓ रीयल-टाइम स्टॉक अपडेट • सभी कीमतों में कर शामिल हैं"}
-        </p>
-      </Card>
+      {!searchQuery && (
+        <Card className={`${seniorMode ? 'p-6 md:p-8 text-xl' : 'p-4 md:p-5 text-sm md:text-base'} mb-8 md:mb-12 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-none shadow-sm rounded-2xl`}>
+          <p className="text-blue-900 dark:text-blue-200 font-medium flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-blue-500" />
+            {language === "en"
+              ? "Real-time stock updates • All prices include taxes"
+              : "रीयल-टाइम स्टॉक अपडेट • सभी कीमतों में कर शामिल हैं"}
+          </p>
+        </Card>
+      )}
 
       {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-12 w-12 animate-spin text-green-600" />
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <div className="relative">
+            <div className="absolute inset-0 bg-green-500 blur-[30px] opacity-20 rounded-full" />
+            <Loader2 className="h-16 w-16 animate-spin text-green-600 relative z-10" />
+          </div>
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">
-            {language === "en" ? "No products found in this category." : "इस श्रेणी में कोई उत्पाद नहीं मिला।"}
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-4">
+          <div className="bg-gray-100 dark:bg-gray-800 p-8 rounded-full mb-6">
+            <SearchX className="h-16 w-16 text-gray-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            {language === "en" ? "No products found" : "कोई उत्पाद नहीं मिला"}
+          </h2>
+          <p className="text-gray-500 text-lg max-w-md">
+            {searchQuery 
+              ? (language === "en" ? "Try adjusting your search terms or browse our categories." : "अपने खोज शब्दों को समायोजित करने का प्रयास करें या हमारी श्रेणियों को ब्राउज़ करें।")
+              : (language === "en" ? "This category is currently empty. Check back later!" : "यह श्रेणी वर्तमान में खाली है। बाद में वापस आएं!")}
           </p>
+          {searchQuery && (
+            <Link to="/products/all">
+              <Button className="mt-8 bg-green-600 rounded-full px-8 py-6 text-lg">
+                {language === "en" ? "View All Products" : "सभी उत्पाद देखें"}
+              </Button>
+            </Link>
+          )}
         </div>
       ) : (
-        <div className={`grid ${seniorMode ? 'grid-cols-1 md:grid-cols-2 gap-6 md:gap-8' : 'grid-cols-2 md:grid-cols-3 gap-4 md:gap-6'}`}>
+        <div className={`grid ${seniorMode ? 'grid-cols-1 md:grid-cols-2 gap-8' : 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8'}`}>
           {products.map((product) => (
-            <Card key={product.id} className={`${seniorMode ? 'p-6 md:p-8' : 'p-4 md:p-6'} relative`}>
+            <Card 
+              key={product.id} 
+              className={`${seniorMode ? 'p-6 md:p-8 rounded-[2rem]' : 'p-4 md:p-6 rounded-[1.5rem]'} relative overflow-hidden bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border-white/40 dark:border-gray-800/60 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group`}
+            >
+              {/* Decorative Blur blob */}
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-300/20 to-blue-300/20 rounded-full blur-2xl -z-10 group-hover:scale-150 transition-transform duration-700" />
+
               {/* Stock Status Badge */}
               <Badge
-                className={`absolute ${seniorMode ? 'top-4 right-4 md:top-6 md:right-6 text-sm md:text-lg px-3 py-1 md:px-4 md:py-2' : 'top-3 right-3 md:top-4 md:right-4 text-xs md:text-sm'} ${
+                className={`absolute z-10 ${seniorMode ? 'top-6 right-6 text-lg px-4 py-2 rounded-xl' : 'top-4 right-4 text-xs md:text-sm px-3 py-1.5 rounded-lg'} border-none shadow-md ${
                   product.inStock
-                    ? 'bg-green-600'
-                    : 'bg-red-600'
+                    ? 'bg-white/90 text-green-700 dark:bg-gray-800/90 dark:text-green-400 backdrop-blur-md'
+                    : 'bg-red-500 text-white shadow-red-500/30'
                 }`}
               >
                 {product.inStock ? (
-                  <CheckCircle className={`${seniorMode ? 'h-4 w-4 md:h-5 md:w-5' : 'h-3 w-3 md:h-4 md:w-4'} mr-1 inline`} />
+                  <CheckCircle className={`${seniorMode ? 'h-5 w-5' : 'h-3.5 w-3.5'} mr-1.5 inline`} />
                 ) : (
-                  <AlertCircle className={`${seniorMode ? 'h-4 w-4 md:h-5 md:w-5' : 'h-3 w-3 md:h-4 md:w-4'} mr-1 inline`} />
+                  <AlertCircle className={`${seniorMode ? 'h-5 w-5' : 'h-3.5 w-3.5'} mr-1.5 inline`} />
                 )}
-                <span className="hidden md:inline">
+                <span className="font-bold tracking-wide">
                   {product.inStock
                     ? (language === "en" ? "In Stock" : "स्टॉक में")
                     : (language === "en" ? "Out of Stock" : "स्टॉक में नहीं")}
@@ -104,32 +145,33 @@ export function ProductsPage() {
               </Badge>
 
               <Link to={`/product/${product.id}`}>
-                <div className={`${seniorMode ? 'h-48 md:h-64 mb-4 md:mb-6' : 'h-40 md:h-52 mb-3 md:mb-4'} overflow-hidden rounded-2xl bg-gray-50 dark:bg-gray-900 group`}>
+                <div className={`${seniorMode ? 'h-56 md:h-72 mb-6' : 'h-40 md:h-48 lg:h-56 mb-4 md:mb-5'} p-4 flex items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-800/50 dark:to-gray-900`}>
                   <img 
                     src={product.image} 
                     alt={product.name} 
-                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-contain drop-shadow-xl transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
               </Link>
 
-              <h3 className={`${seniorMode ? 'text-xl md:text-3xl mb-2 md:mb-3' : 'text-base md:text-lg mb-1 md:mb-2'} font-semibold text-gray-900 dark:text-white truncate`}>
-                {product.name}
-              </h3>
+              <div className="space-y-1 md:space-y-2 mb-4 md:mb-6">
+                <h3 className={`${seniorMode ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} font-black text-gray-900 dark:text-white truncate leading-tight`}>
+                  {product.name}
+                </h3>
+                <p className={`${seniorMode ? 'text-xl' : 'text-sm md:text-base'} text-gray-500 dark:text-gray-400 font-medium`}>
+                  {product.unit} • <span className="capitalize">{product.category}</span>
+                </p>
+              </div>
 
-              <p className={`${seniorMode ? 'text-lg md:text-2xl mb-3 md:mb-4' : 'text-xs md:text-sm mb-2'} text-gray-600 dark:text-gray-400`}>
-                {product.category} • {product.unit}
-              </p>
-
-              <div className="flex items-center justify-between gap-2">
-                <span className={`${seniorMode ? 'text-2xl md:text-4xl' : 'text-lg md:text-2xl'} font-bold text-green-600 dark:text-green-400`}>
+              <div className="flex items-center justify-between gap-3 md:gap-4 mt-auto">
+                <span className={`${seniorMode ? 'text-4xl' : 'text-2xl md:text-3xl'} font-black text-green-600 dark:text-green-400 tracking-tight`}>
                   ₹{product.price}
                 </span>
                 <Button
                   onClick={() => handleAddToCart(product)}
                   disabled={!product.inStock}
-                  size={seniorMode ? "default" : "sm"}
-                  className={seniorMode ? 'text-base md:text-xl px-4 md:px-8 py-4 md:py-6' : 'text-xs md:text-sm'}
+                  size={seniorMode ? "lg" : "default"}
+                  className={`flex-1 max-w-[120px] md:max-w-none ${seniorMode ? 'text-xl px-8 py-7 rounded-2xl' : 'text-sm md:text-base py-5 md:py-6 rounded-xl'} font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 transition-all active:scale-95`}
                 >
                   {language === "en" ? "Add" : "जोड़ें"}
                 </Button>
@@ -141,4 +183,5 @@ export function ProductsPage() {
     </div>
   );
 }
+
 
