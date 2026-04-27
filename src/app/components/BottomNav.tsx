@@ -28,7 +28,7 @@ export function BottomNav() {
       {/* Bottom Navigation Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
         {/* Frosted glass navbar */}
-        <div className="mx-2 mb-2 rounded-2xl bg-white/90 dark:bg-gray-900/90 backdrop-blur-2xl border border-white/50 dark:border-gray-800/60 shadow-[0_-4px_30px_rgba(0,0,0,0.08)] px-2 py-1.5">
+        <div className="mx-2 mb-2 rounded-2xl bg-white/90 dark:bg-black/90 backdrop-blur-2xl border border-white/50 dark:border-white/10 shadow-[0_-4px_30px_rgba(0,0,0,0.08)] px-2 py-1.5">
           <div className="flex justify-around items-center max-w-lg mx-auto">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;

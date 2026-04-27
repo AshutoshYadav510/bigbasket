@@ -7,7 +7,7 @@ import { Toaster } from "./ui/sonner";
 export function RootLayout() {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-[#f8fafc] dark:bg-gray-950 text-gray-900 dark:text-gray-50 flex flex-col relative overflow-hidden">
+      <div className="min-h-screen bg-[#f8fafc] dark:bg-black text-gray-900 dark:text-gray-50 flex flex-col relative overflow-hidden">
         {/* Global Beautiful 3D Background & Blobs */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
           {/* Super Premium 3D Grocery Art */}

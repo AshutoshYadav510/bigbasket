@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { ShoppingCart, User, Package, Languages, Accessibility, Home, Menu, X, HelpCircle, LogOut } from "lucide-react";
+import { ShoppingCart, User, Package, Languages, Accessibility, Home, Menu, X, HelpCircle, LogOut, Sun, Moon } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -7,14 +7,14 @@ import { VoiceSearch } from "./VoiceSearch";
 import { useState } from "react";
 
 export function NavBar() {
-  const { cart, seniorMode, toggleSeniorMode, language, toggleLanguage, user, logout } = useApp();
+  const { cart, seniorMode, toggleSeniorMode, language, toggleLanguage, user, logout, darkMode, toggleDarkMode } = useApp();
   const location = useLocation();
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <>
-      <nav className={`sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 ${seniorMode ? 'py-4 md:py-6' : 'py-3 md:py-4'}`}>
+      <nav className={`sticky top-0 z-50 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 ${seniorMode ? 'py-4 md:py-6' : 'py-3 md:py-4'}`}>
         <div className="max-w-7xl mx-auto px-3 md:px-4">
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center justify-between gap-4">
@@ -39,6 +39,15 @@ export function NavBar() {
               >
                 <Languages className={seniorMode ? 'h-8 w-8' : 'h-5 w-5'} />
                 {seniorMode && <span className="ml-2">{language === "en" ? "हिंदी" : "English"}</span>}
+              </Button>
+
+              <Button
+                variant="ghost"
+                size={seniorMode ? "lg" : "icon"}
+                onClick={toggleDarkMode}
+                className={`${seniorMode ? 'text-lg px-6 py-6' : ''} hidden md:flex`}
+              >
+                {darkMode ? <Sun className={seniorMode ? 'h-8 w-8' : 'h-5 w-5'} /> : <Moon className={seniorMode ? 'h-8 w-8' : 'h-5 w-5'} />}
               </Button>
 
 
@@ -103,7 +112,10 @@ export function NavBar() {
               BigBasket
             </Link>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
+                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
               <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
@@ -120,7 +132,7 @@ export function NavBar() {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-[120px] bg-white dark:bg-gray-900 z-40 overflow-y-auto">
+        <div className="md:hidden fixed inset-0 top-[120px] bg-white dark:bg-black z-40 overflow-y-auto">
           <div className="px-4 py-6 space-y-4">
             {user ? (
               <>

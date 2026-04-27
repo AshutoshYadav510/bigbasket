@@ -113,6 +113,24 @@ export function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label className={`${seniorMode ? 'text-3xl mb-2' : 'text-lg mb-1'} block font-black text-gray-900 dark:text-white`}>
+                    {language === "en" ? "Dark Mode" : "डार्क मोड"}
+                  </Label>
+                  <p className={`${seniorMode ? 'text-2xl' : 'text-sm'} font-bold text-gray-500 dark:text-gray-400`}>
+                    {language === "en"
+                      ? "Easier on the eyes"
+                      : "आंखों के लिए आसान"}
+                  </p>
+                </div>
+                <Switch
+                  checked={useApp().darkMode}
+                  onCheckedChange={useApp().toggleDarkMode}
+                  className={seniorMode ? 'scale-150' : 'scale-125'}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className={`${seniorMode ? 'text-3xl mb-2' : 'text-lg mb-1'} block font-black text-gray-900 dark:text-white`}>
                     {language === "en" ? "Language" : "भाषा"}
                   </Label>
                   <p className={`${seniorMode ? 'text-2xl' : 'text-sm'} font-bold text-gray-500 dark:text-gray-400`}>
