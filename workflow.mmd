@@ -1,0 +1,35 @@
+graph TD
+    %% Styling
+    classDef mobile fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:white;
+    classDef frontend fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:white;
+    classDef backend fill:#FF9800,stroke:#EF6C00,stroke-width:2px,color:white;
+    classDef db fill:#9C27B0,stroke:#6A1B9A,stroke-width:2px,color:white;
+    classDef action fill:#ECEFF1,stroke:#90A4AE,stroke-width:2px;
+
+    %% Components
+    Mobile[Flutter Android App]:::mobile
+    React[React / Vite Frontend]:::frontend
+    API[Vercel Node.js Backend]:::backend
+    DB[(Neon PostgreSQL DB)]:::db
+
+    %% User Journey Nodes
+    Home(Home Page / Categories):::action
+    Auth(Sign Up / Login):::action
+    Browse(Search / Browse Products):::action
+    Cart(Add to Cart & Manage Qty):::action
+    Checkout(Checkout / Delivery Address):::action
+    Order(Order Confirmation / My Orders):::action
+
+    %% Architecture Flow
+    Mobile -->|Hosts WebView via port 3000| React
+    React -->|REST API calls| API
+    API -->|Prisma ORM Queries| DB
+
+    %% User Workflow
+    React --> Home
+    Home --> Browse
+    Browse -.->|Requires Auth| Auth
+    Auth --> Browse
+    Browse --> Cart
+    Cart --> Checkout
+    Checkout --> Order

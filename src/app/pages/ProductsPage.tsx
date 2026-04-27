@@ -169,7 +169,7 @@ export function ProductsPage() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-between gap-3 md:gap-4 mt-auto">
+              <div className="flex items-center justify-between gap-1 sm:gap-3 md:gap-4 mt-auto">
                 <span className={`${seniorMode ? 'text-4xl' : 'text-2xl md:text-3xl'} font-black text-green-600 dark:text-green-400 tracking-tight`}>
                   ₹{product.price}
                 </span>
@@ -177,25 +177,25 @@ export function ProductsPage() {
                   const cartItem = cart.find(item => item.id === product.id);
                   if (cartItem) {
                     return (
-                      <div className={`flex items-center bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 ${seniorMode ? 'rounded-2xl p-1.5' : 'rounded-xl p-1'}`}>
+                      <div className={`flex items-center shrink-0 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 ${seniorMode ? 'rounded-2xl p-1.5' : 'rounded-xl p-0.5 sm:p-1'}`}>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
-                          className={`${seniorMode ? 'h-10 w-10' : 'h-8 w-8'} rounded-lg hover:bg-white dark:hover:bg-gray-700 active:scale-90 transition-all`}
+                          className={`${seniorMode ? 'h-10 w-10' : 'h-6 w-6 sm:h-8 sm:w-8'} rounded-md sm:rounded-lg hover:bg-white dark:hover:bg-gray-700 active:scale-90 transition-all`}
                         >
-                          <Minus className="h-4 w-4" />
+                          <Minus className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
-                        <span className={`${seniorMode ? 'w-10 text-xl' : 'w-8 text-base'} text-center font-black text-green-700 dark:text-green-400`}>
+                        <span className={`${seniorMode ? 'w-10 text-xl' : 'w-5 sm:w-8 text-xs sm:text-base'} text-center font-black text-green-700 dark:text-green-400`}>
                           {cartItem.quantity}
                         </span>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
-                          className={`${seniorMode ? 'h-10 w-10' : 'h-8 w-8'} rounded-lg hover:bg-white dark:hover:bg-gray-700 active:scale-90 transition-all`}
+                          className={`${seniorMode ? 'h-10 w-10' : 'h-6 w-6 sm:h-8 sm:w-8'} rounded-md sm:rounded-lg hover:bg-white dark:hover:bg-gray-700 active:scale-90 transition-all`}
                         >
-                          <Plus className="h-4 w-4" />
+                          <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                       </div>
                     );
