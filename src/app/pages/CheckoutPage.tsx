@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { CreditCard, MapPin, Clock, Check, UserPlus } from "lucide-react";
+import { CreditCard, MapPin, Clock, Check, UserPlus, Landmark, Wallet, Banknote } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -28,14 +28,14 @@ export function CheckoutPage() {
   const finalTotal = total + deliveryFee;
 
   const paymentMethods = [
-    { id: "upi", name: language === "en" ? "UPI (GPay, PhonePe, Paytm)" : "UPI (गूगल पे, फोनपे)", icon: "💳", popular: true },
-    { id: "phonepe", name: language === "en" ? "PhonePe" : "फोनपे", icon: "📱", popular: true },
-    { id: "googlepay", name: language === "en" ? "Google Pay" : "गूगल पे", icon: "🔵", popular: true },
-    { id: "paytm", name: language === "en" ? "Paytm" : "पेटीएम", icon: "💙", popular: false },
-    { id: "card", name: language === "en" ? "Credit/Debit Card" : "क्रेडिट/डेबिट कार्ड", icon: "💳", popular: false },
-    { id: "netbanking", name: language === "en" ? "Net Banking" : "नेट बैंकिंग", icon: "🏦", popular: false },
-    { id: "wallet", name: language === "en" ? "Digital Wallets" : "डिजिटल वॉलेट", icon: "👛", popular: false },
-    { id: "cod", name: language === "en" ? "Cash on Delivery" : "कैश ऑन डिलीवरी", icon: "💵", popular: false },
+    { id: "upi", name: language === "en" ? "UPI (Google Pay, PhonePe, Paytm)" : "UPI (गूगल पे, फोनपे, पेटीएम)", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI" className="w-full h-full object-contain" />, popular: true },
+    { id: "phonepe", name: language === "en" ? "PhonePe" : "फोनपे", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg" alt="PhonePe" className="w-full h-full object-contain" />, popular: true },
+    { id: "googlepay", name: language === "en" ? "Google Pay" : "गूगल पे", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="Google Pay" className="w-full h-full object-contain" />, popular: true },
+    { id: "paytm", name: language === "en" ? "Paytm" : "पेटीएम", icon: <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg" alt="Paytm" className="w-full h-full object-contain" />, popular: false },
+    { id: "card", name: language === "en" ? "Credit/Debit Card" : "क्रेडिट/डेबिट कार्ड", icon: <CreditCard className="w-full h-full text-blue-500" />, popular: false },
+    { id: "netbanking", name: language === "en" ? "Net Banking" : "नेट बैंकिंग", icon: <Landmark className="w-full h-full text-blue-700" />, popular: false },
+    { id: "wallet", name: language === "en" ? "Digital Wallets" : "डिजिटल वॉलेट", icon: <Wallet className="w-full h-full text-pink-500" />, popular: false },
+    { id: "cod", name: language === "en" ? "Cash on Delivery" : "कैश ऑन डिलीवरी", icon: <Banknote className="w-full h-full text-green-600" />, popular: false },
   ];
 
   const handlePlaceOrder = async () => {
@@ -166,7 +166,7 @@ export function CheckoutPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <span className={seniorMode ? 'text-3xl' : 'text-2xl'}>{method.icon}</span>
+                      <div className={`flex items-center justify-center shrink-0 ${seniorMode ? 'w-10 h-10' : 'w-8 h-8'}`}>{method.icon}</div>
                       <div className="flex flex-col items-start gap-1">
                         <span className={`${seniorMode ? 'text-lg md:text-xl' : 'text-sm font-bold'} text-gray-900 dark:text-white line-clamp-1`}>
                           {method.name}

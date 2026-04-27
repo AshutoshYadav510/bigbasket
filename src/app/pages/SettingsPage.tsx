@@ -177,14 +177,6 @@ export function SettingsPage() {
               {language === "en" ? "Support & More" : "सहायता और अधिक"}
             </h2>
             <div className={`grid ${seniorMode ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'}`}>
-              <Button variant="ghost" className="h-16 justify-start font-black text-lg rounded-2xl hover:bg-white/50">
-                <Bell className="h-6 w-6 mr-3 text-blue-500" />
-                {language === "en" ? "Notifications" : "सूचनाएं"}
-              </Button>
-              <Button variant="ghost" className="h-16 justify-start font-black text-lg rounded-2xl hover:bg-white/50">
-                <CreditCard className="h-6 w-6 mr-3 text-purple-500" />
-                {language === "en" ? "Payments" : "भुगतान"}
-              </Button>
               <Link to="/support">
                 <Button variant="ghost" className="h-16 w-full justify-start font-black text-lg rounded-2xl hover:bg-white/50">
                   <HelpCircle className="h-6 w-6 mr-3 text-amber-500" />
