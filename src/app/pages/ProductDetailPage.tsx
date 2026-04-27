@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 import { ArrowLeft, CheckCircle, AlertCircle, Truck, Shield, Loader2, Minus, Plus } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
@@ -10,7 +10,8 @@ import { api, Product } from "../../lib/api";
 
 export function ProductDetailPage() {
   const { id } = useParams();
-  const { addToCart, cart, updateQuantity, seniorMode, language } = useApp();
+  const { addToCart, cart, updateQuantity, seniorMode, language, user } = useApp();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -34,6 +35,11 @@ export function ProductDetailPage() {
 
   const handleAddToCart = () => {
     if (!product) return;
+    if (!user) {
+      toast.error(language === "en" ? "Please login to add items to cart" : "कार्ट में आइटम जोड़ने के लिए कृपया लॉगिन करें");
+      navigate("/login");
+      return;
+    }
     if (!product.inStock) {
       toast.error(language === "en" ? "Out of stock" : "स्टॉक में नहीं");
       return;
@@ -200,7 +206,7 @@ export function ProductDetailPage() {
       </div>
 
       {/* Mobile Sticky Add to Cart Footer */}
-      <div className="md:hidden fixed bottom-[65px] left-0 right-0 p-4 bg-white/90 dark:bg-gray-950/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-40 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
+      <div className="md:hidden fixed bottom-[76px] left-0 right-0 p-4 bg-white/90 dark:bg-gray-950/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 z-40 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
         <div className="max-w-lg mx-auto flex items-center gap-4">
           <div className="hidden sm:block flex-1">
             <p className="font-bold text-gray-900 dark:text-white truncate">{product.name}</p>

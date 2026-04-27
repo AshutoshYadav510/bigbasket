@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams, Link } from "react-router";
-import { AlertCircle, CheckCircle, Loader2, SearchX } from "lucide-react";
+import { useParams, useSearchParams, Link, useNavigate } from "react-router";
+import { AlertCircle, CheckCircle, Loader2, SearchX, Minus, Plus } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -13,7 +13,8 @@ export function ProductsPage() {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || undefined;
   
-  const { addToCart, seniorMode, language } = useApp();
+  const { addToCart, updateQuantity, cart, seniorMode, language, user } = useApp();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,6 +43,11 @@ export function ProductsPage() {
   }, [category, searchQuery, language]);
 
   const handleAddToCart = (product: Product) => {
+    if (!user) {
+      toast.error(language === "en" ? "Please login to add items to cart" : "कार्ट में आइटम जोड़ने के लिए कृपया लॉगिन करें");
+      navigate("/login");
+      return;
+    }
     if (!product.inStock) {
       toast.error(language === "en" ? "Out of stock" : "स्टॉक में नहीं");
       return;
@@ -58,7 +64,7 @@ export function ProductsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 pb-6 md:py-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 md:mb-12 gap-4">
         <div>
           <h1 className={`${seniorMode ? 'text-4xl md:text-6xl' : 'text-3xl md:text-5xl'} font-black text-gray-900 dark:text-white capitalize tracking-tight`}>
@@ -167,14 +173,44 @@ export function ProductsPage() {
                 <span className={`${seniorMode ? 'text-4xl' : 'text-2xl md:text-3xl'} font-black text-green-600 dark:text-green-400 tracking-tight`}>
                   ₹{product.price}
                 </span>
-                <Button
-                  onClick={() => handleAddToCart(product)}
-                  disabled={!product.inStock}
-                  size={seniorMode ? "lg" : "default"}
-                  className={`flex-1 max-w-[120px] md:max-w-none ${seniorMode ? 'text-xl px-8 py-7 rounded-2xl' : 'text-sm md:text-base py-5 md:py-6 rounded-xl'} font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 transition-all active:scale-95`}
-                >
-                  {language === "en" ? "Add" : "जोड़ें"}
-                </Button>
+                {(() => {
+                  const cartItem = cart.find(item => item.id === product.id);
+                  if (cartItem) {
+                    return (
+                      <div className={`flex items-center bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 ${seniorMode ? 'rounded-2xl p-1.5' : 'rounded-xl p-1'}`}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => updateQuantity(product.id, cartItem.quantity - 1)}
+                          className={`${seniorMode ? 'h-10 w-10' : 'h-8 w-8'} rounded-lg hover:bg-white dark:hover:bg-gray-700 active:scale-90 transition-all`}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className={`${seniorMode ? 'w-10 text-xl' : 'w-8 text-base'} text-center font-black text-green-700 dark:text-green-400`}>
+                          {cartItem.quantity}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
+                          className={`${seniorMode ? 'h-10 w-10' : 'h-8 w-8'} rounded-lg hover:bg-white dark:hover:bg-gray-700 active:scale-90 transition-all`}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    );
+                  }
+                  return (
+                    <Button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={!product.inStock}
+                      size={seniorMode ? "lg" : "default"}
+                      className={`flex-1 max-w-[120px] md:max-w-none ${seniorMode ? 'text-xl px-8 py-7 rounded-2xl' : 'text-sm md:text-base py-5 md:py-6 rounded-xl'} font-bold bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20 transition-all active:scale-95`}
+                    >
+                      {language === "en" ? "Add" : "जोड़ें"}
+                    </Button>
+                  );
+                })()}
               </div>
             </Card>
           ))}

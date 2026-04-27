@@ -39,25 +39,28 @@ export interface Order {
 }
 
 export const api = {
-  loginUser: async (email: string) => {
+  loginUser: async (email: string, password: string) => {
     const res = await fetch(`${API_URL}/users/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, password }),
     });
     if (!res.ok) {
       if (res.status === 404) return null; // user not found
+      if (res.status === 401) {
+        throw new Error("Incorrect password");
+      }
       throw new Error("Failed to login");
     }
     const data = await res.json();
     return data.data as User;
   },
 
-  registerUser: async (name: string, email: string, phone?: string) => {
+  registerUser: async (name: string, email: string, password: string, phone?: string, address?: string) => {
     const res = await fetch(`${API_URL}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, phone }),
+      body: JSON.stringify({ name, email, password, phone, address }),
     });
     if (!res.ok) {
       const errorData = await res.json();

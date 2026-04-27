@@ -86,7 +86,60 @@ export function SupportPage() {
         {language === "en" ? "Help & Support" : "सहायता और समर्थन"}
       </h1>
 
-      {/* Contact Methods */}
+      {/* Prominent Contact Details Card */}
+      <Card className={`${seniorMode ? 'p-8 md:p-10 mb-10 md:mb-16' : 'p-5 md:p-8 mb-8 md:mb-12'} bg-gradient-to-br from-green-600 to-emerald-700 border-none shadow-2xl rounded-3xl text-white relative overflow-hidden`}>
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -translate-y-10 translate-x-10" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl translate-y-10 -translate-x-10" />
+        
+        <div className="relative z-10">
+          <h2 className={`${seniorMode ? 'text-3xl md:text-4xl mb-6' : 'text-xl md:text-2xl mb-4'} font-black`}>
+            {language === "en" ? "Get In Touch" : "संपर्क करें"}
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {/* Phone */}
+            <a href="tel:1800-123-4567" className="flex items-center gap-4 p-4 md:p-5 bg-white/15 backdrop-blur-sm rounded-2xl hover:bg-white/25 transition-all group">
+              <div className="p-3 bg-white/20 rounded-xl group-hover:scale-110 transition-transform">
+                <Phone className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'}`} />
+              </div>
+              <div>
+                <p className={`${seniorMode ? 'text-lg' : 'text-sm'} font-medium text-white/80`}>
+                  {language === "en" ? "Phone Number" : "फ़ोन नंबर"}
+                </p>
+                <p className={`${seniorMode ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} font-black`}>
+                  1800-123-4567
+                </p>
+                <p className={`${seniorMode ? 'text-base' : 'text-xs'} text-white/70 mt-0.5`}>
+                  {language === "en" ? "Toll-Free • 24/7" : "टोल-फ्री • 24/7"}
+                </p>
+              </div>
+            </a>
+
+            {/* Email */}
+            <a href="mailto:support@bigbasket.com" className="flex items-center gap-4 p-4 md:p-5 bg-white/15 backdrop-blur-sm rounded-2xl hover:bg-white/25 transition-all group">
+              <div className="p-3 bg-white/20 rounded-xl group-hover:scale-110 transition-transform">
+                <Mail className={`${seniorMode ? 'h-8 w-8' : 'h-6 w-6'}`} />
+              </div>
+              <div>
+                <p className={`${seniorMode ? 'text-lg' : 'text-sm'} font-medium text-white/80`}>
+                  {language === "en" ? "Email Address" : "ईमेल पता"}
+                </p>
+                <p className={`${seniorMode ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} font-black`}>
+                  support@bigbasket.com
+                </p>
+                <p className={`${seniorMode ? 'text-base' : 'text-xs'} text-white/70 mt-0.5`}>
+                  {language === "en" ? "Response within 24 hrs" : "24 घंटे में जवाब"}
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </Card>
+
+      {/* Other Contact Methods */}
+      <h2 className={`${seniorMode ? 'text-3xl md:text-4xl mb-6 md:mb-8' : 'text-xl md:text-2xl mb-4 md:mb-6'} font-bold text-gray-900 dark:text-white`}>
+        {language === "en" ? "More Ways to Reach Us" : "हमसे संपर्क करने के और तरीके"}
+      </h2>
       <div className={`grid grid-cols-1 md:grid-cols-2 ${seniorMode ? 'gap-6 md:gap-8 mb-10 md:mb-16' : 'gap-4 md:gap-6 mb-8 md:mb-12'}`}>
         {contactMethods.map((method, idx) => (
           <Card key={idx} className={`${seniorMode ? 'p-6 md:p-8' : 'p-4 md:p-6'} ${method.bgColor} hover:shadow-lg transition-shadow cursor-pointer`}>

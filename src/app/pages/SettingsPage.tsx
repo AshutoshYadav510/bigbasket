@@ -1,5 +1,5 @@
 import { User, Bell, MapPin, CreditCard, HelpCircle, LogOut, UserPlus } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { useApp } from "../context/AppContext";
 import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
@@ -95,7 +95,7 @@ export function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <Label className={`${seniorMode ? 'text-3xl mb-2' : 'text-lg mb-1'} block font-black text-gray-900 dark:text-white`}>
-                    {language === "en" ? "Senior-Friendly Mode" : "वरिष्ठ-अनुकूल मोड"}
+                    {language === "en" ? "Senior Citizen Mode" : "वरिष्ठ नागरिक मोड"}
                   </Label>
                   <p className={`${seniorMode ? 'text-2xl' : 'text-sm'} font-bold text-gray-500 dark:text-gray-400`}>
                     {language === "en"
@@ -167,10 +167,12 @@ export function SettingsPage() {
                 <CreditCard className="h-6 w-6 mr-3 text-purple-500" />
                 {language === "en" ? "Payments" : "भुगतान"}
               </Button>
-              <Button variant="ghost" className="h-16 justify-start font-black text-lg rounded-2xl hover:bg-white/50">
-                <HelpCircle className="h-6 w-6 mr-3 text-amber-500" />
-                {language === "en" ? "Help Center" : "सहायता केंद्र"}
-              </Button>
+              <Link to="/support">
+                <Button variant="ghost" className="h-16 w-full justify-start font-black text-lg rounded-2xl hover:bg-white/50">
+                  <HelpCircle className="h-6 w-6 mr-3 text-amber-500" />
+                  {language === "en" ? "Help Center" : "सहायता केंद्र"}
+                </Button>
+              </Link>
               <Button onClick={handleLogout} variant="ghost" className="h-16 justify-start font-black text-lg rounded-2xl hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-500">
                 <LogOut className="h-6 w-6 mr-3" />
                 {language === "en" ? "Logout" : "लॉगआउट"}

@@ -49,7 +49,7 @@ export function NavBar() {
                 className={`${seniorMode ? 'text-lg px-6 py-6 bg-blue-600 hover:bg-blue-700' : ''} hidden lg:flex`}
               >
                 <Accessibility className={seniorMode ? 'h-8 w-8' : 'h-5 w-5'} />
-                {seniorMode && <span className="ml-2">Senior Mode ON</span>}
+                {seniorMode && <span className="ml-2">Senior Citizen Mode ON</span>}
               </Button>
 
               <Link to="/support">
@@ -185,7 +185,7 @@ export function NavBar() {
               className="w-full justify-start text-lg py-6"
             >
               <Accessibility className="h-6 w-6 mr-3" />
-              {language === "en" ? "Senior Mode" : "वरिष्ठ मोड"} {seniorMode ? "ON" : "OFF"}
+              {language === "en" ? "Senior Citizen Mode" : "वरिष्ठ नागरिक मोड"} {seniorMode ? "ON" : "OFF"}
             </Button>
           </div>
         </div>

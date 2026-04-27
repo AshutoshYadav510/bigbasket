@@ -17,7 +17,7 @@ export const prisma = new PrismaClient();
 
 // Middleware
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:3000", "https://bigbasket-six.vercel.app"],
+  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000", "https://bigbasket-six.vercel.app"],
   credentials: true,
 }));
 app.use(express.json());

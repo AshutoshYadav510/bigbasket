@@ -42,10 +42,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 // POST /api/users/login - Login a user
 router.post("/login", async (req: Request, res: Response) => {
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ success: false, error: "email is required" });
+    if (!email || !password) {
+      return res.status(400).json({ success: false, error: "email and password are required" });
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
@@ -53,7 +53,13 @@ router.post("/login", async (req: Request, res: Response) => {
       return res.status(404).json({ success: false, error: "User not found" });
     }
 
-    res.json({ success: true, data: user });
+    if (user.password !== password) {
+      return res.status(401).json({ success: false, error: "Incorrect password" });
+    }
+
+    // Don't return password in response
+    const userData = { id: user.id, name: user.name, email: user.email, phone: user.phone, address: user.address, createdAt: user.createdAt, updatedAt: user.updatedAt };
+    res.json({ success: true, data: userData });
   } catch (error) {
     res.status(500).json({ success: false, error: "Failed to login" });
   }
@@ -62,10 +68,10 @@ router.post("/login", async (req: Request, res: Response) => {
 // POST /api/users - Create a user
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, address } = req.body;
+    const { name, email, password, phone, address } = req.body;
 
-    if (!name || !email) {
-      return res.status(400).json({ success: false, error: "name and email are required" });
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, error: "name, email and password are required" });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -74,10 +80,12 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     const user = await prisma.user.create({
-      data: { name, email, phone, address },
+      data: { name, email, password, phone, address },
     });
 
-    res.status(201).json({ success: true, data: user });
+    // Don't return password in response
+    const userData = { id: user.id, name: user.name, email: user.email, phone: user.phone, address: user.address, createdAt: user.createdAt, updatedAt: user.updatedAt };
+    res.status(201).json({ success: true, data: userData });
   } catch (error) {
     res.status(500).json({ success: false, error: "Failed to create user" });
   }
