@@ -49,11 +49,12 @@ export function HomePage() {
             <p className={`${seniorMode ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} text-gray-200 font-medium max-w-2xl`}>
               {subheading}
             </p>
-            <Link to="/products/all">
-              <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white border-none px-8 py-6 text-lg rounded-full shadow-lg transition-all hover:scale-105 active:scale-95">
-                {language === "en" ? "Shop Now" : "अभी खरीदें"}
-              </Button>
-            </Link>
+            <Button 
+              onClick={() => document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' })}
+              className="mt-6 bg-green-600 hover:bg-green-700 text-white border-none px-8 py-6 text-lg rounded-full shadow-lg transition-all hover:scale-105 active:scale-95"
+            >
+              {language === "en" ? "Shop Now" : "अभी खरीदें"}
+            </Button>
           </div>
         </div>
       </div>
@@ -79,7 +80,7 @@ export function HomePage() {
         </div>
 
         {/* Categories Section */}
-        <div className="flex justify-between items-end mb-8">
+        <div id="categories" className="flex justify-between items-end mb-8 scroll-mt-24">
           <div>
             <h2 className={`${seniorMode ? 'text-3xl md:text-5xl mb-2' : 'text-2xl md:text-4xl mb-1'} font-bold text-gray-900 dark:text-white`}>
               {language === "en" ? "Categories" : "श्रेणियां"}
