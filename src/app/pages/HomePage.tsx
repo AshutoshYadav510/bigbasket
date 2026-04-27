@@ -49,9 +49,11 @@ export function HomePage() {
             <p className={`${seniorMode ? 'text-2xl md:text-3xl' : 'text-lg md:text-xl'} text-gray-200 font-medium max-w-2xl`}>
               {subheading}
             </p>
-            <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white border-none px-8 py-6 text-lg rounded-full shadow-lg transition-all hover:scale-105 active:scale-95">
-              {language === "en" ? "Shop Now" : "अभी खरीदें"}
-            </Button>
+            <Link to="/products/all">
+              <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white border-none px-8 py-6 text-lg rounded-full shadow-lg transition-all hover:scale-105 active:scale-95">
+                {language === "en" ? "Shop Now" : "अभी खरीदें"}
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
